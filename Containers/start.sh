@@ -25,61 +25,6 @@ tee -a /etc/resolv.conf <<< "nameserver 172.18.20.5"
 #tee -a /etc/resolv.conf <<< "nameserver 1.0.0.1"
 #tee -a /etc/resolv.conf <<< "nameserver 8.8.4.4"
 
-
-cat <<EOF > /opt/xray/config/config.json
-{
-  "log": {
-    "loglevel": "silent"
-  },
-  "inbounds": [
-    {
-      "port": 10800,
-      "listen": "0.0.0.0",
-      "protocol": "socks",
-      "settings": {
-        "udp": true
-      },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": ["http", "tls", "quic"],
-		"routeOnly": true
-      }
-    }
-  ],
-  "outbounds": [
-    {
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "$SERVER_ADDRESS",
-            "port": $SERVER_PORT,
-            "users": [
-              {
-                "id": "$USER_ID",
-                "encryption": "$ENCRYPTION",
-                "alterId": 0
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "reality",
-        "realitySettings": {
-          "fingerprint": "$FINGERPRINT_FP",
-          "serverName": "$SERVER_NAME_SNI",
-          "publicKey": "$PUBLIC_KEY_PBK",
-          "spiderX": "",
-          "shortId": "$SHORT_ID_SID"
-        }
-      },
-	  "tag": "proxy"
-    }
-  ]
-}
-EOF
 echo "Xray and tun2socks preparing for launch"
 rm -rf /tmp/xray/ && mkdir /tmp/xray/
 7z x /opt/xray/xray.7z -o/tmp/xray/ -y
